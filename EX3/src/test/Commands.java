@@ -14,7 +14,7 @@ public class Commands {
 		public float readVal() throws IOException;
 		public void write(float val)throws IOException;
 		public void getcsv (PrintWriter put) throws IOException;
-		public void upcsv ( BufferedReader in) throws IOException;
+		public void upcsv ( FileReader in) throws IOException;
 
 	}
 	public class StandartIO implements DefaultIO{
@@ -49,8 +49,8 @@ public class Commands {
 		}
 
 		@Override
-		public void upcsv(BufferedReader in) throws IOException {
-
+		public void upcsv(FileReader in) throws IOException {
+				//soso
 		}
 	}
 
@@ -274,7 +274,10 @@ public class Commands {
 				}
 				check_f_t=true;
 			}
-			double TP_rate=(double)count_TP/(double)countP;
+			double TP_rate;
+			if(countP!=0){
+			TP_rate=(double)count_TP/(double)countP;
+			}else {TP_rate=0;}
 			double FA_rate=(double)count_FP/(double)countN;
 			TP_rate=(double)((int)(TP_rate*1000))/1000;
 			FA_rate=(double)((int)(FA_rate*1000))/1000;
@@ -299,7 +302,7 @@ public class Commands {
 		}
 		@Override
 		public void execute() throws IOException {
-
+		//NADA
 		}
 	}
 		

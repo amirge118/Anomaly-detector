@@ -23,12 +23,10 @@ public class AnomalyDetectionHandler implements ClientHandler{
 		public String readText() throws IOException {
 			return in.nextLine();
 		}
-
 		@Override
 		public void write(String text) throws IOException {
 					out.print(text);
 		}
-
 		@Override
 		public float readVal() throws IOException {
 			return in.nextFloat();
@@ -52,15 +50,18 @@ public class AnomalyDetectionHandler implements ClientHandler{
 		}
 
 		@Override
-		public void upcsv(BufferedReader in) throws IOException {
-			String line = readText();
-			BufferedReader upreader= new BufferedReader(new FileReader(line));
+		public void upcsv(FileReader in) throws IOException {
+			
+			BufferedReader upreader= new BufferedReader(in);
+			String line = upreader.readLine();
 			while((line=upreader.readLine())!=null){
-			if (line==""){
+			if (line.compareTo("")==0){
 				line=readText();
 			}
 			out.write(line+"\n");
 			}
+			upreader.close();
+		
 		}
 	}
 
