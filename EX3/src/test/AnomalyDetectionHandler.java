@@ -14,9 +14,9 @@ public class AnomalyDetectionHandler implements ClientHandler{
 
 		Scanner in;
 		PrintWriter out;
-		public SocketIO(OutputStream out1, InputStream in1) {
-				in=new Scanner(in1);
-				out=new PrintWriter(out1);
+		public SocketIO(PrintWriter outToclient, BufferedReader inFromclient) {
+			in = new Scanner(inFromclient);
+			out = new PrintWriter(outToclient);
 
 		}
 		@Override
@@ -70,18 +70,16 @@ public class AnomalyDetectionHandler implements ClientHandler{
 		//
 		BufferedReader inFromclient =new BufferedReader(new InputStreamReader(in));
 		PrintWriter outToclient = new PrintWriter(out);
+		String line = inFromclient.readLine();
+		// SocketIO socIO =new SocketIO(outToclient,inFromclient);
+		// CLI cliTest = new CLI(socIO);
+		//cliTest.start();
+		
 
-		SocketIO socIO =new SocketIO(out,in);
-		CLI cliTest = new CLI(socIO);
-		cliTest.start();
+
 			////write to server num
 			//do somtings bcuse of the num
-
-
-
-
-
-		String line = socIO.write();
+		//String line = socIO.write();
 
 
 	}
@@ -91,3 +89,4 @@ public class AnomalyDetectionHandler implements ClientHandler{
 
 
 }
+/
