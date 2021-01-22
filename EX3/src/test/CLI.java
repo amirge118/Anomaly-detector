@@ -28,27 +28,30 @@ public class CLI {
 		commands.add(c.new exit());
 		// implement
 	}
-	
+	public void Printmenu(){
+		try{
+		dio.write("Welcome to the Anomaly Detection Server.\n");
+		dio.write("Please choose an option:\n");
+		int numcom = 1;
+		for (Command x : commands) {
+			dio.write(numcom + ". " + x.getdes() + "\n");
+			numcom++;
+		}
+	}catch(IOException E){return;}	
+	}
 	public void start(){
 		try {
 			while (exitO) {
 
 
-				dio.write("Welcome to the Anomaly Detection Server.\n");
-				dio.write("Please choose an option:\n");
-				int numcom = 1;
-				for (Command x : commands) {
-					dio.write(numcom + ". " + x.getdes() + "\n");
-					numcom++;
-				}
-				numcom = 1;
-				float num_to_ex = dio.readVal();
+				Printmenu();
+				int num_to_ex =(int) dio.readVal();
 				if (num_to_ex > commands.size() || num_to_ex < 1) {
 					dio.write("try another number\n");
 					continue;
 				}
 
-				commands.get((int) num_to_ex - 1).execute();
+				commands.get( num_to_ex - 1).execute();
 				if (num_to_ex == 6) {
 					exitO = false;
 				}

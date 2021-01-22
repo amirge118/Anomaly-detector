@@ -15,7 +15,8 @@ public class Server {
 	}
 
 	volatile boolean stop;
-	int clienLimit=10;
+	volatile int clienLimit=0;
+	
 	public Server() {
 		stop=false;
 	}
@@ -26,21 +27,26 @@ public class Server {
 		try {
 			ServerSocket server = new ServerSocket(port);
 			while (!stop) {
+				if(clienLimit==10){
+					continue;
+				}
 				server.setSoTimeout(1000);
+				try{
 				Socket client = server.accept();
-
 				InputStream in = client.getInputStream();
 				OutputStream out = client.getOutputStream();
-
+				clienLimit++;
 				ch.handel(out,in);
 
 				in.close();
 				out.close();
 				client.close();
+				clienLimit--;
 				stop();
 				System.out.println("system stoped");
-
+				}catch(IOException E){}
 			}
+			server.close();
 		}catch (SocketException e){}catch (IOException e1){}
 	}
 	

@@ -44,6 +44,7 @@ public class Commands {
 			}
 			while(line.compareTo("done")!=0){
 				out.write(line+"\n");
+				out.flush();
 				line = dio.readText();
 			}
 		}
