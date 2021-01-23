@@ -6,6 +6,8 @@ import test.Server.ClientHandler;
 
 
 import java.io.*;
+import java.net.Socket;
+import java.util.Dictionary;
 import java.util.Scanner;
 
 public class AnomalyDetectionHandler implements ClientHandler{
@@ -14,10 +16,9 @@ public class AnomalyDetectionHandler implements ClientHandler{
 
 		Scanner in;
 		PrintWriter out;
-		public SocketIO(PrintWriter outToclient, BufferedReader inFromclient) {
+		public SocketIO(OutputStream outToclient, InputStream inFromclient) {
 			in = new Scanner(inFromclient);
-			out = outToclient;
-
+			out = new PrintWriter(outToclient);
 		}
 		@Override
 		public String readText() throws IOException {
@@ -25,57 +26,28 @@ public class AnomalyDetectionHandler implements ClientHandler{
 		}
 		@Override
 		public void write(String text) throws IOException {
-					out.print(text);
+			out.print(text);
+			out.flush();
 		}
 		@Override
 		public float readVal() throws IOException {
 			return in.nextFloat();
 		}
-
 		@Override
 		public void write(float val) throws IOException {
 			out.print(val);
-		}
-
-		@Override
-		public void getcsv(PrintWriter put) throws IOException {
-			String line = readText();
-			if (line==""){
-				line=readText();
-			}
-			while(line.compareTo("done")!=0){
-				out.write(line+"\n");
-				line = readText();
-			}
-		}
-
-		@Override
-		public void upcsv(FileReader in) throws IOException {
-			
-			BufferedReader upreader= new BufferedReader(in);
-			String line = upreader.readLine();
-			while((line=upreader.readLine())!=null){
-			if (line.compareTo("")==0){
-				line=readText();
-			}
-			out.write(line+"\n");
-			}
-			upreader.close();
-		
+			out.flush();
 		}
 	}
-
 	@Override
 	public void handel(OutputStream out, InputStream in) throws IOException {
-		//connect the server
-		
-		BufferedReader infromclient =new BufferedReader(new InputStreamReader(in));
-		PrintWriter outtosceen= new PrintWriter(out);
-		SocketIO socket=new SocketIO(outtosceen,infromclient);
-		CLI cliTest = new CLI(socket);
-		cliTest.start();
-		cliTest.dio.write("bye");
 
+		PrintWriter outtosceen= new PrintWriter(out);
+		SocketIO socket = new SocketIO(out,in);
+		CLI cli = new CLI(socket);
+		cli.start();
+		cli.dio.write("bye");
+	
 	}
 
 

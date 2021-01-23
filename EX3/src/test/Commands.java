@@ -3,7 +3,6 @@ package test;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.PriorityQueue;
 import java.util.Scanner;
 
 public class Commands {
@@ -13,9 +12,6 @@ public class Commands {
 		public void write(String text)throws IOException;
 		public float readVal() throws IOException;
 		public void write(float val)throws IOException;
-		public void getcsv (PrintWriter put) throws IOException;
-		public void upcsv ( FileReader in) throws IOException;
-
 	}
 	public class StandartIO implements DefaultIO{
 
@@ -37,27 +33,35 @@ public class Commands {
 		public void write(float val) throws IOException{
 			System.out.println(val);
 		}
-		public void getcsv(PrintWriter out) throws IOException {
-			String line = dio.readText();
-			if (line==""){
-				line=dio.readText();
-			}
-			while(line.compareTo("done")!=0){
-				out.write(line+"\n");
-				out.flush();
-				line = dio.readText();
-			}
-		}
-
-		@Override
-		public void upcsv(FileReader in) throws IOException {
-				//soso
-		}
 	}
 
 	DefaultIO dio;
 	public Commands(DefaultIO dio) { this.dio=dio;	}
+	public void getcsv(PrintWriter out) throws IOException {
+		String line = dio.readText();
+		if (line==""){
+			line=dio.readText();
+		}
+		while(line.compareTo("done")!=0){
+			out.write(line+"\n");
+			out.flush();
+			line = dio.readText();
+		}
+		out.close();
+	}
+	public void upcsv(FileReader in) throws IOException {
 
+		BufferedReader upreader= new BufferedReader(in);
+		String line;
+		while((line=upreader.readLine())!=null){
+			if (line.compareTo("")==0){
+				line=dio.readText();
+			}
+			dio.write(line+"\n");
+		}
+		upreader.close();
+
+	}
 
 	private class SharedState{
 		float threshold = (float) 0.9;
@@ -65,8 +69,7 @@ public class Commands {
 		TimeSeries testcsv;
 		SimpleAnomalyDetector test = new SimpleAnomalyDetector();
 		List<AnomalyReport> normalyrep;
-		StandartIO stand = new StandartIO();
-		
+
 		public void setThreshold(float threshold) {
 			this.threshold = threshold;
 		}
@@ -92,7 +95,7 @@ public class Commands {
 			super("upload a time series csv file");
 		}
 		@Override
-		public void printdes() throws IOException { sharedState.stand.write(description); }
+		public void printdes() throws IOException { dio.write(description); }
 		@Override
 		public  String getdes(){ return description; }
 		@Override
@@ -100,25 +103,17 @@ public class Commands {
 			//server side
 			dio.write("Please upload your local train CSV file.\n");
 			PrintWriter out =new PrintWriter(new FileWriter("anomalyTrain.csv"));
-			sharedState.stand.getcsv(out);
-			out.close();
+			getcsv(out);
 			sharedState.traincsv=new TimeSeries("anomalyTrain.csv");
 
 			dio.write("Upload complete.\n");
 
 			dio.write("Please upload your local test CSV file.\n");
 			PrintWriter out1 =new PrintWriter( new FileWriter("anomalyTest.csv"));
-			sharedState.stand.getcsv(out1);
-			out1.close();
+			getcsv(out1);
 			sharedState.testcsv=new TimeSeries("anomalyTest.csv");
 			dio.write("Upload complete.\n");
-
-			//client side
-//			Scanner path1 = new Scanner(System.in);
-//			String path = path1.nextLine();
-//			dio.uplodfile(path);
-//			dio.write("done");
-		}		
+		}
 	}
 	public class Algoset extends Command{
 
@@ -224,8 +219,7 @@ public class Commands {
 			}
 			String name= "decfile.txt";
 			PrintWriter out =new PrintWriter( new FileWriter(name));
-			sharedState.stand.getcsv(out);
-			out.close();
+			getcsv(out);
 			dio.write("upload complete\n");
 			int start;
 			int end;
@@ -277,7 +271,7 @@ public class Commands {
 			}
 			double TP_rate;
 			if(countP!=0){
-			TP_rate=(double)count_TP/(double)countP;
+				TP_rate=(double)count_TP/(double)countP;
 			}else {TP_rate=0;}
 			double FA_rate=(double)count_FP/(double)countN;
 			TP_rate=(double)((int)(TP_rate*1000))/1000;
@@ -303,8 +297,8 @@ public class Commands {
 		}
 		@Override
 		public void execute() throws IOException {
-		//NADA
+			//NADA
 		}
 	}
-		
+
 }
