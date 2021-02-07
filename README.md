@@ -1,5 +1,4 @@
 # Anomaly detector
-this is my first respository on github.
 
 In this Anomaly detector I used:
 
@@ -15,4 +14,3 @@ Implementation of data-based algorithms within the system I created.
 
 Parallel programming using threads.
 
-Event-oriented programming, desktop application with GUI.
